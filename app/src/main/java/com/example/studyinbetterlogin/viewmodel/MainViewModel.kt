@@ -1,0 +1,81 @@
+package com.example.studyinbetterlogin.viewmodel
+
+import android.accounts.Account
+import android.app.Application
+import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.example.studyinbetterlogin.db.Repository
+import com.example.studyinbetterlogin.db.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+class MainViewModel(application: Application): AndroidViewModel(application) {
+    // 数据仓库
+    val repository = Repository(application)
+    // 保存数据
+    val userList : LiveData<List<User>> = repository.loadUsers()
+    var inSaveUser: MutableLiveData<MutableList<String>?> = MutableLiveData(mutableListOf())
+    private val _userClickEvent = MutableLiveData<String>()
+    val userClickEvent: MutableLiveData<String> get() = _userClickEvent
+    val LoginByParrern:MutableLiveData<String>  = MutableLiveData()
+    companion object {
+        val patternMap: MutableMap<Pair<Int, Int>, String> = mutableMapOf(
+            Pair(0, 0) to "1",
+            Pair(0, 1) to "2",
+            Pair(0, 2) to "3",
+            Pair(1, 0) to "4",
+            Pair(1, 1) to "5",
+            Pair(1, 2) to "6",
+            Pair(2, 0) to "7",
+            Pair(2, 1) to "8",
+            Pair(2, 2) to "9"
+        )
+    }
+
+    fun updatePatternData(data: List<Pair<Int, Int>>) {
+        var s =""
+        for((i,j) in data)
+        {
+            s+= patternMap[Pair(i,j)]
+        }
+        Log.d("MainViewModel1", s)
+        val currentList = inSaveUser.value!!
+        currentList.add(s)
+        inSaveUser.value = currentList
+        for(i in currentList)
+        {
+            Log.d("MainViewModel", "Updated pattern data: $i")
+        }
+    }
+
+    fun saveUser(user: User) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.saveUser(user)
+            Log.d("MainViewModel", "User saved: ${user.account}")
+        }
+    }
+
+    fun deleteUser(user: User) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteUser(user)
+            Log.d("MainViewModel", "User deleted: ${user.account}")
+        }
+    }
+
+    fun deleteAll() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAll()
+            Log.d("MainViewModel", "All users deleted")
+        }
+    }
+
+    fun updateUser(user: User) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateUser(user)
+            Log.d("MainViewModel", "User updated: ${user.account}")
+        }
+    }
+}
