@@ -12,26 +12,29 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studyinbetterlogin.R
 import com.example.studyinbetterlogin.databinding.FragmentLoginByParrernBinding
+import com.example.studyinbetterlogin.db.User
 import com.example.studyinbetterlogin.viewmodel.MainViewModel
 import com.example.studyinbetterlogin.viewmodel.MainViewModel.Companion.patternMap
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LoginByParrernFragment : BaseFragment<FragmentLoginByParrernBinding>() {
     private val mViewModel: MainViewModel by activityViewModels()
-    private var isRecyclerViewVisible = false
 
     override fun initBinding(): FragmentLoginByParrernBinding {
         return FragmentLoginByParrernBinding.inflate(layoutInflater)
     }
 
     override fun initView() {
-        // 设置 RecyclerView
         val recyclerView = mBinding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         // 观察 userList
         mViewModel.userList.observe(viewLifecycleOwner, Observer { users ->
             if (users != null) {
-                val adapter = UserAdapter(users, mViewModel)
+                val adapter = UserAdapter(users, mViewModel,recyclerView)
                 recyclerView.adapter = adapter
             } else {
                 Log.e("LoginByParrernFragment", "User list is null")
@@ -63,6 +66,8 @@ class LoginByParrernFragment : BaseFragment<FragmentLoginByParrernBinding>() {
                     .setTitle(title)
                     .setMessage(message)
                     .setPositiveButton("确定") { dialog, _ ->
+                        mBinding.patternUnlockView.setCircles()
+                        mBinding.patternUnlockView.outErrorView()
                         dialog.dismiss()
                     }
                     .show()
@@ -97,37 +102,37 @@ class LoginByParrernFragment : BaseFragment<FragmentLoginByParrernBinding>() {
                     if (userList.any { user -> user.account == account && user.pattrenPassword == password }) {
                         Toast.makeText(requireContext(), "登入成功", Toast.LENGTH_SHORT).show()
                     } else {
+                        mBinding.patternUnlockView.inErrorView()
                         showAlert("提示", "请输入正确的账号和密码")
                     }
                 }
             }
         }
 
-        mBinding.displayAccount.setOnClickListener {
-            toggleRecyclerView()
+        mViewModel.adapterShowOrNot.observe(viewLifecycleOwner) { isVisible ->
+            if (!isVisible) {
+                // 隐藏RecyclerView
+                recyclerView.animate()
+                    .translationY(recyclerView.height.toFloat())
+                    .alpha(0.0f)
+                    .setDuration(300)
+                    .withEndAction {
+                        recyclerView.visibility = View.GONE
+                    }
+            } else {
+                // 显示RecyclerView
+                recyclerView.visibility = View.VISIBLE
+                recyclerView.alpha = 0.0f
+                recyclerView.animate()
+                    .translationY(0f)
+                    .alpha(1.0f)
+                    .setDuration(300)
+            }
         }
-    }
 
-    private fun toggleRecyclerView() {
-        val recyclerView = mBinding.recyclerView
-        if (isRecyclerViewVisible) {
-            // 隐藏RecyclerView
-            recyclerView.animate()
-                .translationY(recyclerView.height.toFloat())
-                .alpha(0.0f)
-                .setDuration(300)
-                .withEndAction {
-                    recyclerView.visibility = View.GONE
-                }
-        } else {
-            // 显示RecyclerView
-            recyclerView.visibility = View.VISIBLE
-            recyclerView.alpha = 0.0f
-            recyclerView.animate()
-                .translationY(0f)
-                .alpha(1.0f)
-                .setDuration(300)
+        mBinding.displayAccount.setOnClickListener {
+            val isVisible = mViewModel.adapterShowOrNot.value ?: true
+            mViewModel.adapterShowOrNot.value = !isVisible
         }
-        isRecyclerViewVisible = !isRecyclerViewVisible
     }
 }

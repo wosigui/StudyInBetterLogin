@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application): AndroidViewModel(application) {
     // 数据仓库
+    var adapterShowOrNot:MutableLiveData<Boolean> = MutableLiveData(true)
     val repository = Repository(application)
     // 保存数据
     val userList : LiveData<List<User>> = repository.loadUsers()

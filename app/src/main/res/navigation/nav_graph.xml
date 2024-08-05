@@ -42,7 +42,8 @@
         tools:layout="@layout/fragment_sure_pattern" >
         <action
             android:id="@+id/action_surePatternFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/registerFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginByParrernFragment"

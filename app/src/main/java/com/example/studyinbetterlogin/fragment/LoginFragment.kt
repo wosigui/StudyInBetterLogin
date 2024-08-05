@@ -17,11 +17,9 @@ import com.example.studyinbetterlogin.viewmodel.MainViewModel
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     private val mViewModel: MainViewModel by activityViewModels()
-
     override fun initBinding(): FragmentLoginBinding {
         return FragmentLoginBinding.inflate(layoutInflater)
     }
-
     override fun initView() {
         // 观察 userList 的变化
         mViewModel.userList.observe(viewLifecycleOwner, Observer { users ->
@@ -63,7 +61,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                         showAlert("错误", "用户列表为空，请稍后重试")
                         return@setOnClickListener
                     }
-
                     for (user in userList) {
                         Log.d("LoginFragment", "User: ${user.id}, ${user.account}, ${user.password}, ${user.pattrenPassword}")
                     }

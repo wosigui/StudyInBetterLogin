@@ -1,5 +1,4 @@
 package com.example.studyinbetterlogin.view
-
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
@@ -14,21 +13,21 @@ import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import com.example.studyinbetterlogin.viewmodel.MainViewModel
 import com.example.studyinbetterlogin.viewmodel.MainViewModel.Companion.patternMap
 import kotlin.math.min
-
 class PatternUnlockView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private val paint = Paint()
-    private val circles = Array(3) { Array(3) { Circle(0f, 0f, false) } }
+    private var circles = Array(3) { Array(3) { Circle(0f, 0f, false) } }
     val selectedCircles = mutableListOf<Pair<Int, Int>>()
     private var currentX = 0f
     private var currentY = 0f
     private var isDrawing = false
-    private val linePaint = Paint()
+    private var linePaint = Paint()
+    private var linePaint1 = Paint()
     private var circleRadius = 0f
     private lateinit var viewModel: MainViewModel
     data class Circle(var cx: Float, var cy: Float, var isSelected: Boolean)
     private var sum=0
     private var tagChangeListener: ((Any?) -> Unit)? = null
-
+    private val errorPaint=Paint()
     init {
         paint.color = Color.BLACK
         paint.style = Paint.Style.STROKE
@@ -36,17 +35,20 @@ class PatternUnlockView(context: Context, attrs: AttributeSet) : View(context, a
         linePaint.color = Color.BLUE
         linePaint.style = Paint.Style.STROKE
         linePaint.strokeWidth = 10f
+        linePaint1.color = Color.BLUE
+        linePaint1.style = Paint.Style.STROKE
+        linePaint1.strokeWidth = 10f
+        errorPaint.color = Color.RED
+        errorPaint.style = Paint.Style.STROKE
+        errorPaint.strokeWidth = 15f
     }
-
     fun setTagChangeListener(listener: (Any?) -> Unit) {
         tagChangeListener = listener
     }
-
     override fun setTag(tag: Any?) {
         super.setTag(tag)
         tagChangeListener?.invoke(tag)
     }
-
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         findViewTreeViewModelStoreOwner()?.let {
@@ -56,12 +58,9 @@ class PatternUnlockView(context: Context, attrs: AttributeSet) : View(context, a
             Log.e("PatternUnlockView", "ViewModelStoreOwner is null")
         }
     }
-
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-
         circleRadius = min(w, h) / 10f
-
         for (i in 0..2) {
             for (j in 0..2) {
                 val cx = w / 4 * (i + 1).toFloat()
@@ -70,7 +69,6 @@ class PatternUnlockView(context: Context, attrs: AttributeSet) : View(context, a
             }
         }
     }
-
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -83,7 +81,6 @@ class PatternUnlockView(context: Context, attrs: AttributeSet) : View(context, a
                 }
             }
         }
-
         if (isDrawing && selectedCircles.isNotEmpty()) {
             var (lastX, lastY) = selectedCircles.first().let { circles[it.first][it.second].cx to circles[it.first][it.second].cy }
             for ((i, j) in selectedCircles) {
@@ -95,7 +92,6 @@ class PatternUnlockView(context: Context, attrs: AttributeSet) : View(context, a
             canvas.drawLine(lastX, lastY, currentX, currentY, linePaint)
         }
     }
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
         currentX = event.x
         currentY = event.y
@@ -135,7 +131,25 @@ class PatternUnlockView(context: Context, attrs: AttributeSet) : View(context, a
         }
         return true
     }
+    fun inErrorView() {
+        linePaint=errorPaint
+    }
+    fun outErrorView(){
+        Log.d("LoginByParrernFragment1", "Delay finished, calling outErrorView")
 
+        linePaint=paint
+        linePaint=linePaint1
+        invalidate()
+
+    }
+    fun setCircles(){
+        for(i in 0..2){
+            for(j in 0..2){
+                circles[i][j].isSelected=false
+            }
+        }
+        invalidate()
+    }
     private fun checkSelectedCircle(currentX: Float, currentY: Float) {
         for (i in 0..2) {
             for (j in 0..2) {
@@ -147,7 +161,6 @@ class PatternUnlockView(context: Context, attrs: AttributeSet) : View(context, a
             }
         }
     }
-
     fun resetCircles() {
         for (i in 0..2) {
             for (j in 0..2) {
