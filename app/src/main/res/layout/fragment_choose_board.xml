@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1E2226"
+    tools:context=".fragment.darwFragment.ChooseBoardFragment">
+
+    <TextView
+        android:id="@+id/helloWorld"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="点击下面的加号按钮开始开始绘图之旅！"
+
+        android:textColor="#E7B2AE"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.445" />
+
+    <ImageView
+        android:id="@+id/addBoard"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:src="@drawable/add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.465"
+        app:layout_constraintStart_toEndOf="@+id/deleteBoard"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.793" />
+
+    <ImageView
+        android:id="@+id/deleteBoard"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="24dp"
+        android:src="@drawable/delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/downloadBoard"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.793" />
+
+    <ImageView
+        android:id="@+id/downloadBoard"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:src="@drawable/down"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.364"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.793" />
+
+    <ImageView
+        android:id="@+id/shareBoard"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:src="@drawable/share"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/downloadBoard"
+        app:layout_constraintHorizontal_bias="0.561"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.793" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -67,6 +67,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
                     if (userList.any { user -> user.account == account && user.password == password }) {
                         Toast.makeText(requireContext(), "登入成功", Toast.LENGTH_SHORT).show()
+                        val loggedInUser = userList.find { user -> user.account == account && user.password == password }
+                        if (loggedInUser != null) {
+                            mViewModel.Logged_user.value = loggedInUser.account
+                        }
+                        findNavController().navigate(R.id.action_loginFragment_to_loginToWaitFragment)
                     } else {
                         showAlert("提示", "请输入正确的账号和密码")
                     }

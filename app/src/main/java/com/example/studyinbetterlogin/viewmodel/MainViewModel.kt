@@ -22,6 +22,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
     private val _userClickEvent = MutableLiveData<String>()
     val userClickEvent: MutableLiveData<String> get() = _userClickEvent
     val LoginByParrern:MutableLiveData<String>  = MutableLiveData()
+    val Logged_user:MutableLiveData<String>  = MutableLiveData()
     companion object {
         val patternMap: MutableMap<Pair<Int, Int>, String> = mutableMapOf(
             Pair(0, 0) to "1",

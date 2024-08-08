@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_loginFragment_to_loginByParrernFragment"
             app:destination="@id/loginByParrernFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_loginToWaitFragment"
+            app:destination="@id/loginToWaitFragment" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
@@ -53,5 +56,35 @@
         <action
             android:id="@+id/action_loginByParrernFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_loginByParrernFragment_to_loginToWaitFragment"
+            app:destination="@id/loginToWaitFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginToWaitFragment"
+        android:name="com.example.studyinbetterlogin.fragment.darwFragment.loginToWaitFragment"
+        android:label="fragment_login_to_wait"
+        tools:layout="@layout/fragment_login_to_wait" >
+        <action
+            android:id="@+id/action_loginToWaitFragment_to_chooseBoardFragment"
+            app:destination="@id/chooseBoardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseBoardFragment"
+        android:name="com.example.studyinbetterlogin.fragment.darwFragment.ChooseBoardFragment"
+        android:label="fragment_choose_board"
+        tools:layout="@layout/fragment_choose_board" >
+        <action
+            android:id="@+id/action_chooseBoardFragment_to_drawFragment"
+            app:destination="@id/drawFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/drawFragment"
+        android:name="com.example.studyinbetterlogin.fragment.darwFragment.DrawFragment"
+        android:label="fragment_draw"
+        tools:layout="@layout/fragment_draw" >
+        <action
+            android:id="@+id/action_drawFragment_to_chooseBoardFragment"
+            app:destination="@id/chooseBoardFragment" />
     </fragment>
 </navigation>

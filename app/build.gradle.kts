@@ -71,4 +71,7 @@ dependencies {
     //navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+
+    //反射
+    implementation("org.jetbrains.kotlin:kotlin-reflect:<kotlin_version>")
 }
