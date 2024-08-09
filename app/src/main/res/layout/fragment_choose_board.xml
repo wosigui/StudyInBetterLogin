@@ -8,12 +8,13 @@
     android:background="#1E2226"
     tools:context=".fragment.darwFragment.ChooseBoardFragment">
 
+
+
     <TextView
         android:id="@+id/helloWorld"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="点击下面的加号按钮开始开始绘图之旅！"
-
         android:textColor="#E7B2AE"
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -21,6 +22,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.445" />
+
+    <ImageView
+        android:id="@+id/savedImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Saved DrawView Image"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/addBoard"

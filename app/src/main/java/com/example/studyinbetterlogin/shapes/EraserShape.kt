@@ -3,9 +3,15 @@ package com.example.studyinbetterlogin.shapes
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import kotlin.math.abs
 
-class FreehandShape(startX: Float, startY: Float, mPaint: Paint) : Shape(startX, startY, mPaint) {
+class EraserShape(startX: Float, startY: Float, mPaint: Paint) : Shape(startX, startY, mPaint) {
+    val eraserPaint=Paint(mPaint).apply {
+        color=0xFF1E2226.toInt()
+        strokeWidth=mPaint.strokeWidth+10
+    }
     private var points: MutableList<MutableList<Float>> = mutableListOf(mutableListOf(startX,startY))
     override var endX: Float = startX
         set(value) {
@@ -31,7 +37,7 @@ class FreehandShape(startX: Float, startY: Float, mPaint: Paint) : Shape(startX,
             path.lineTo(point[0], point[1])
         }
 
-        canvas.drawPath(path, mPaint)
+        canvas.drawPath(path, eraserPaint)
     }
 
     override fun isInside(x: Float, y: Float): Boolean {

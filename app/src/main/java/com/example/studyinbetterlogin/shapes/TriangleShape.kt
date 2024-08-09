@@ -16,12 +16,16 @@ class TriangleShape(startX: Float, startY: Float, mPaint: Paint) : Shape(startX,
     }
 
     override fun isInside(x: Float, y: Float): Boolean {
-        // Using the area method to check if the point is inside the triangle
+        // 使用面积法判断点是否在三角形内部
         val areaOrig = area(startX, startY, endX, endY, 2 * startX - endX, endY)
         val area1 = area(x, y, endX, endY, 2 * startX - endX, endY)
         val area2 = area(startX, startY, x, y, 2 * startX - endX, endY)
         val area3 = area(startX, startY, endX, endY, x, y)
-        return areaOrig == area1 + area2 + area3
+
+        // 设置一个容差值，避免浮点数精度问题
+        val tolerance = 0.02f
+
+        return abs(areaOrig - (area1 + area2 + area3)) < tolerance
     }
 
     private fun area(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float): Float {
