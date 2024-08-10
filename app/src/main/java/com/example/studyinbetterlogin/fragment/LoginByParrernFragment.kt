@@ -108,7 +108,7 @@ class LoginByParrernFragment : BaseFragment<FragmentLoginByParrernBinding>() {
                         findNavController().navigate(R.id.action_loginByParrernFragment_to_loginToWaitFragment)
                     } else {
                         mBinding.patternUnlockView.inErrorView()
-                        showAlert("提示", "请输入正确的账号和密码")
+                        showAlert("提示", "请输入图案密码")
                     }
                 }
             }

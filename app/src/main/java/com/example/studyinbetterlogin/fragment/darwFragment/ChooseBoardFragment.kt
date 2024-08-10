@@ -3,6 +3,8 @@ package com.example.studyinbetterlogin.fragment.darwFragment
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,9 +12,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.example.studyinbetterlogin.R
+import com.example.studyinbetterlogin.adapter.DrawableItem
+import com.example.studyinbetterlogin.adapter.DrawingAdapter
 import com.example.studyinbetterlogin.databinding.FragmentChooseBoardBinding
 import com.example.studyinbetterlogin.databinding.FragmentLoginToWaitBinding
 import com.example.studyinbetterlogin.fragment.BaseFragment
@@ -21,17 +30,117 @@ import java.io.File
 
 class ChooseBoardFragment : BaseFragment<FragmentChooseBoardBinding>() {
     private val mViewModel: MainViewModel by activityViewModels()
+
     override fun initBinding(): FragmentChooseBoardBinding {
-        return  FragmentChooseBoardBinding.inflate(layoutInflater)
+        return FragmentChooseBoardBinding.inflate(layoutInflater)
     }
 
     override fun initView() {
         super.initView()
-        mBinding.addBoard.setOnClickListener{
+        val recyclerView = mBinding.DrawableList
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        // 加载用户目录中的所有 PNG 文件并转换为 Drawable 列表
+        val drawableList = context?.let { getPngDrawablesInAccountDir(it, mViewModel.Logged_user.value!!) }
+        if(drawableList!=null){
+            mBinding.helloWorld.visibility=View.INVISIBLE
+        }
+        val adapter = drawableList?.let { DrawingAdapter(it, mViewModel, recyclerView) }
+
+        // 设置适配器
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+        // 添加缩放动画
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val mid = recyclerView.width / 2.0f
+
+                for (i in 0 until layoutManager.childCount) {
+                    val child = layoutManager.getChildAt(i)
+                    val childMid = (child!!.left + child.right) / 2.0f
+                    val d = Math.abs(mid - childMid)
+                    val scale = 1 - 0.2f * (d / mid)
+                    child.scaleX = scale
+                    child.scaleY = scale
+                }
+            }
+        })
+
+// 添加 SnapHelper 实现自动对齐
+        val snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(recyclerView)
+        // 设置点击事件
+        mBinding.addBoard.setOnClickListener {
             findNavController().navigate(R.id.action_chooseBoardFragment_to_drawFragment)
         }
+
+        mBinding.shareBoard.setOnClickListener {
+            mViewModel.Logged_user.value?.let { it1 ->
+                context?.let { it2 ->
+                    displaySavedDrawView(it2, it1, mBinding.savedImageView)
+                }
+            }
+        }
+        mBinding.deleteBoard.setOnClickListener{
+            if(drawableList.isNullOrEmpty()){
+                Toast.makeText(requireContext(), "没有照片用于删除", Toast.LENGTH_SHORT).show()
+            }else{
+                showAlert("警告","你确定要删除这张照片吗？",recyclerView)
+            }
+        }
+    }
+    private fun showAlert(title: String, message: String, recyclerView: RecyclerView) {
+        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+        if (firstVisibleItemPosition != RecyclerView.NO_POSITION) {
+            val adapter = recyclerView.adapter as DrawingAdapter
+            val drawableItem = adapter.getItem(firstVisibleItemPosition) // 获取顶部的 DrawableItem
+
+            AlertDialog.Builder(requireContext())
+                .setTitle(title)
+                .setMessage(message)
+                .setNegativeButton("取消") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton("确定") { dialog, _ ->
+                    // 删除文件
+                    val file = File(drawableItem.filePath)
+                    if (file.exists()) {
+                        file.delete()
+                        Toast.makeText(requireContext(), "图片已删除", Toast.LENGTH_SHORT).show()
+                        adapter.notifyItemRemoved(firstVisibleItemPosition)
+                        adapter.removeItem(firstVisibleItemPosition)
+                    } else {
+                        Toast.makeText(requireContext(), "文件不存在", Toast.LENGTH_SHORT).show()
+                    }
+                    dialog.dismiss()
+                }
+                .show()
+        }
+    }
+
+}
+
+// 获取用户目录中的 PNG 文件并转换为 Drawable 列表
+fun getPngDrawablesInAccountDir(context: Context, account: String): MutableList<DrawableItem> {
+    val accountDir = getUserDirectory(context, account)
+
+    return if (accountDir.exists() && accountDir.isDirectory) {
+        accountDir.listFiles { _, name ->
+            name.endsWith(".png")
+        }?.mapNotNull { file ->
+            Drawable.createFromPath(file.absolutePath)?.let { DrawableItem(it, file.absolutePath) }
+        } ?.toMutableList()?: mutableListOf()
+    } else {
+        mutableListOf()
     }
 }
+
+
 
 
 fun displaySavedDrawView(context: Context, account: String, imageView: ImageView) {

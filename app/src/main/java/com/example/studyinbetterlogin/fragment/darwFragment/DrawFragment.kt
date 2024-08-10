@@ -181,7 +181,7 @@ fun generateUniqueFileName(): String {
     val formattedDate = sdf.format(date)
 
     // 使用格式化的日期生成唯一文件名
-    return "my.png"
+    return "my$formattedDate.png"
 }
 
 // 将 DrawView 保存到指定路径
