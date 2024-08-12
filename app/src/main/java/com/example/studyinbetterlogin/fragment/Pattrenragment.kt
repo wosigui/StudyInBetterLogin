@@ -33,7 +33,11 @@ class Pattrenragment : BaseFragment<FragmentPattrenragmentBinding>() {
             }
             Log.d("MainViewModel1", s)
             val currentList = mViewModel.inSaveUser.value!!
-            currentList.add(s)
+            if(currentList.size==2){
+                currentList.add(s)
+            }else{
+                currentList[2]=s
+            }
             mViewModel.inSaveUser.value = currentList
             findNavController().navigate(R.id.action_pattrenragment_to_surePatternFragment)
         }

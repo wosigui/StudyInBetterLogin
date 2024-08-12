@@ -56,7 +56,7 @@ class SurePatternFragment : BaseFragment<FragmentSurePatternBinding>() {
                     Toast.makeText(requireContext(), "注册成功", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(R.id.action_surePatternFragment_to_loginFragment)
                 } else {
-                    showAlert("提示","请输入账号和密码")
+                    showAlert("提示","请输入正确的图案密码")
                     mBinding.patternUnlockView.inErrorView()
                     currentList.removeLast()
                 }

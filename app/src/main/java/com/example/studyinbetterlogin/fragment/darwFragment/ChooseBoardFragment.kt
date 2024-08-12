@@ -42,7 +42,7 @@ class ChooseBoardFragment : BaseFragment<FragmentChooseBoardBinding>() {
 
         // 加载用户目录中的所有 PNG 文件并转换为 Drawable 列表
         val drawableList = context?.let { getPngDrawablesInAccountDir(it, mViewModel.Logged_user.value!!) }
-        if(drawableList!=null){
+        if(!drawableList.isNullOrEmpty()){
             mBinding.helloWorld.visibility=View.INVISIBLE
         }
         val adapter = drawableList?.let { DrawingAdapter(it, mViewModel, recyclerView) }

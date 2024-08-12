@@ -1,8 +1,6 @@
 package com.example.studyinbetterlogin.view
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -14,14 +12,13 @@ import com.example.studyinbetterlogin.shapes.CircleShape
 import com.example.studyinbetterlogin.shapes.EraserShape
 import com.example.studyinbetterlogin.shapes.FreehandShape
 import com.example.studyinbetterlogin.shapes.LayerManager
-import com.example.studyinbetterlogin.shapes.OvalShape
 import com.example.studyinbetterlogin.shapes.Shape
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs)  {
     val layerManager: LayerManager = LayerManager()
-    val states: MutableMap<String, Boolean> = mutableMapOf(
+    private val states: MutableMap<String, Boolean> = mutableMapOf(
         "isFill" to false,
         "isMove" to false,
         "isDraw" to true ,// 默认状态
@@ -91,7 +88,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
             }
             MotionEvent.ACTION_UP ->{
                 if(states["isDraw"]==true){
-
+                    eraserToUp()
                 }
             }
         }
@@ -118,12 +115,13 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         setState("isFill")
         for (layout in layerManager.mShapes) {
             for (shape in layout) {
-                if (shape.isInside(x, y)) {
+                if (shape.isInside(x, y)&&shape.mPaint.style!=Paint.Style.FILL) {
                     // 为每个 Shape 创建一个新的 Paint 实例
                     val newPaint = Paint(shape.mPaint).apply {
                         style = Paint.Style.FILL
                     }
                     shape.mPaint = newPaint
+                    return
                 }
             }
         }
@@ -198,4 +196,15 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
             }
         }
     }
+    fun previous(){
+        for (i in layerManager.mShapes.size-1 downTo 0){
+            if(layerManager.mShapes[i].size!=0){
+                layerManager.mShapes[i].removeLast()
+                invalidate()
+                break
+            }
+        }
+    }
+    private fun eraserToUp(){}
+
 }

@@ -1,5 +1,6 @@
 package com.example.studyinbetterlogin.fragment.darwFragment
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -13,9 +14,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.studyinbetterlogin.R
@@ -83,13 +86,7 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>() {
             mBinding.drawBoard.loadShape(FreehandShape(-100f,-100f,thisPaint))
         }
         mBinding.previous.setOnClickListener{
-            for (i in mBinding.drawBoard.layerManager.mShapes.size-1 downTo 0){
-                if(mBinding.drawBoard.layerManager.mShapes[i].size!=0){
-                    mBinding.drawBoard.layerManager.mShapes[i].removeLast()
-                    mBinding.drawBoard.invalidate()
-                    break
-                }
-            }
+            mBinding.drawBoard.previous()
         }
         mBinding.red.setOnClickListener{
             val backgroundColor = (mBinding.red.background as ColorDrawable).color
@@ -141,17 +138,49 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>() {
         })
         mBinding.Fill.setOnClickListener{
             mBinding.drawBoard.setState("isFill")
-            mBinding.drawBoard.invalidate()
         }
         mBinding.move.setOnClickListener{
             mBinding.drawBoard.setState("isMove")
-            mBinding.drawBoard.invalidate()
         }
         mBinding.eraser.setOnClickListener{
             mBinding.drawBoard.setState("isEraser")
         }
         mBinding.save.setOnClickListener{
             context?.let { it1 -> saveDrawViewToUserFolder(it1,mBinding.drawBoard,mViewModel.Logged_user.value!!) }
+        }
+        mBinding.addLayout.setOnClickListener{
+            mBinding.drawBoard.layerManager.addLayer()
+        }
+        mBinding.removeLayer.setOnClickListener{
+            mBinding.drawBoard.layerManager.removeLayer()
+            mBinding.drawBoard.invalidate()
+        }
+        mBinding.changeLayer.setOnClickListener{
+            val inflater = LayoutInflater.from(context)
+
+            // 使用 LayoutInflater 加载自定义的对话框布局
+            val dialogView = inflater.inflate(R.layout.dialog_input, null)
+
+            // 获取布局中的 EditText 视图
+            val editText1 = dialogView.findViewById<EditText>(R.id.editText1)
+            val editText2 = dialogView.findViewById<EditText>(R.id.editText2)
+            val textView=dialogView.findViewById<TextView>(R.id.LayoutCount)
+            // 创建一个 AlertDialog
+            textView.text="当前有${mBinding.drawBoard.layerManager.mShapes.size}个图层"
+            val dialog = AlertDialog.Builder(context)
+                .setTitle("输入数据")
+                .setView(dialogView)
+                .setPositiveButton("确定") { _, _ ->
+                    val input1 = editText1.text.toString().toInt()
+                    val input2 = editText2.text.toString().toInt()
+                    mBinding.drawBoard.invalidate()
+                    if(!mBinding.drawBoard.layerManager.ChangeLayer(input1-1,input2-1)){
+                        Toast.makeText(context,"输入的索引溢出", Toast.LENGTH_LONG).show()
+                    }
+                }
+                .setNegativeButton("取消", null)
+                .create()
+            dialog.show()
         }
     }
 

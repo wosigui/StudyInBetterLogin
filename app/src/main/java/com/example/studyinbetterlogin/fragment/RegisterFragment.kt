@@ -13,6 +13,7 @@ import com.example.studyinbetterlogin.R
 import com.example.studyinbetterlogin.databinding.FragmentRegisterBinding
 import com.example.studyinbetterlogin.viewmodel.MainViewModel
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 
 class RegisterFragment : BaseFragment<FragmentRegisterBinding>() {
@@ -23,6 +24,14 @@ class RegisterFragment : BaseFragment<FragmentRegisterBinding>() {
     }
 
     override fun initView() {
+        mViewModel.userList.observe(viewLifecycleOwner, Observer { users ->
+            if (users != null) {
+                Log.d("LoginFragment", "Observed users data: $users")
+            } else {
+                Log.e("LoginFragment", "User list is null")
+            }
+        })
+
         mBinding.register.setOnClickListener {
             val account = mBinding.Account.text.toString()
             val password = mBinding.Password.text.toString()
@@ -59,12 +68,41 @@ class RegisterFragment : BaseFragment<FragmentRegisterBinding>() {
                 }
                 else -> {
                     if(password==surePassword){
-                        Toast.makeText(requireContext(), "注册成功", Toast.LENGTH_SHORT).show()
-                        val currentList = mViewModel.inSaveUser.value ?: mutableListOf()
-                        currentList.add(account)
-                        currentList.add(password)
-                        mViewModel.inSaveUser.value=currentList
-                        findNavController().navigate(R.id.action_registerFragment_to_pattrenragment)
+                        if(mViewModel.userList.value.isNullOrEmpty()){
+                            Toast.makeText(requireContext(), "注册成功", Toast.LENGTH_SHORT).show()
+                            val currentList = mViewModel.inSaveUser.value ?: mutableListOf()
+                            if(currentList.isEmpty()){
+                                currentList.add(account)
+                                currentList.add(password)
+                            }else{
+                                currentList[0]=account
+                                currentList[1]=password
+                            }
+
+                            mViewModel.inSaveUser.value=currentList
+                            findNavController().navigate(R.id.action_registerFragment_to_pattrenragment)
+                        }else if(mViewModel.userList.value?.any{ user ->  user.account == account } == true){
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("提示")
+                                .setMessage("当前账号不可用，请换一个账号吧")
+                                .setPositiveButton("确定") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .show()
+                        }else{
+                            Toast.makeText(requireContext(), "注册成功", Toast.LENGTH_SHORT).show()
+                            val currentList = mViewModel.inSaveUser.value ?: mutableListOf()
+                            if(currentList.isEmpty()){
+                                currentList.add(account)
+                                currentList.add(password)
+                            }else{
+                                currentList[0]=account
+                                currentList[1]=password
+                            }
+                            mViewModel.inSaveUser.value=currentList
+                            findNavController().navigate(R.id.action_registerFragment_to_pattrenragment)
+                        }
+
                     }else{
                         AlertDialog.Builder(requireContext())
                             .setTitle("提示")
