@@ -113,8 +113,10 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     }
     private fun fillPaint(x: Float, y: Float) {
         setState("isFill")
-        for (layout in layerManager.mShapes) {
-            for (shape in layout) {
+        for (layoutIndex in layerManager.mShapes.size-1 downTo 0) {
+            val layout=layerManager.mShapes[layoutIndex]
+            for (shapeIndex in layout.size-1 downTo 0) {
+                val shape=layout[shapeIndex]
                 if (shape.isInside(x, y)&&shape.mPaint.style!=Paint.Style.FILL) {
                     // 为每个 Shape 创建一个新的 Paint 实例
                     val newPaint = Paint(shape.mPaint).apply {
@@ -143,16 +145,12 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         }
     }
     private fun moveSelectShape(x:Float,y:Float){
-        // 检查 isMovingShape 是否已初始化
         if (!::isMovingShape.isInitialized) {
             Log.e("moveSelectShape", "isMovingShape is not initialized")
             return
         }
-
         val deltaX = x - (isMovingX ?: return)
         val deltaY = y - (isMovingY ?: return)
-
-        // 检查 nextMovingShape 是否为 EraserShape 并已初始化
         if (::nextMovingShape.isInitialized && nextMovingShape is EraserShape) {
             (nextMovingShape as EraserShape).movePoint(deltaX, deltaY)
         }
@@ -165,7 +163,6 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
             isMovingShape.endY += deltaY
 
         }
-        // 更新当前的x和y坐标
         isMovingX = x
         isMovingY = y
     }
