@@ -189,14 +189,15 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>() {
         mBinding.palette.setOnClickListener{
             if(colorPickerView.visibility == View.GONE){
                 colorPickerView.visibility = View.VISIBLE
+                colorPickerView.setColorListener(ColorEnvelopeListener { envelope, fromUser ->
+                    thisPaint.color=envelope.color
+                    mBinding.drawBoard.loadPaint(thisPaint)
+                })
             }else if (colorPickerView.visibility == View.VISIBLE){
                 colorPickerView.visibility = View.GONE
             }
         }
-        colorPickerView.setColorListener(ColorEnvelopeListener { envelope, fromUser ->
-            thisPaint.color=envelope.color
-            mBinding.drawBoard.loadPaint(thisPaint)
-        })
+
 
     }
 
