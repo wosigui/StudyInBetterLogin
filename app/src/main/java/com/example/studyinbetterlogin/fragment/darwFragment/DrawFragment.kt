@@ -33,11 +33,14 @@ import com.example.studyinbetterlogin.shapes.OvalShape
 import com.example.studyinbetterlogin.shapes.RectangleShape
 import com.example.studyinbetterlogin.shapes.TriangleShape
 import com.example.studyinbetterlogin.viewmodel.MainViewModel
+import com.skydoves.colorpickerview.ColorEnvelope
+import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
 
 class DrawFragment : BaseFragment<FragmentDrawBinding>() {
     private val mViewModel: MainViewModel by activityViewModels()
@@ -47,6 +50,8 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>() {
     }
 
     override fun initView() {
+        val colorPickerView=mBinding.colorPickerView
+
         super.initView()
         val thisPaint: Paint = Paint().apply {
             color = Color.WHITE
@@ -59,6 +64,9 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>() {
         }
         var isMoved = false
         mBinding.selectDrawTools.setOnClickListener {
+            if (colorPickerView.visibility == View.VISIBLE){
+                colorPickerView.visibility = View.GONE
+            }
             if (isMoved) {
                 mBinding.constraintLayout.animate().translationX(0f).setDuration(400).start()
             } else {
@@ -157,15 +165,10 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>() {
         }
         mBinding.changeLayer.setOnClickListener{
             val inflater = LayoutInflater.from(context)
-
-            // 使用 LayoutInflater 加载自定义的对话框布局
             val dialogView = inflater.inflate(R.layout.dialog_input, null)
-
-            // 获取布局中的 EditText 视图
             val editText1 = dialogView.findViewById<EditText>(R.id.editText1)
             val editText2 = dialogView.findViewById<EditText>(R.id.editText2)
             val textView=dialogView.findViewById<TextView>(R.id.LayoutCount)
-            // 创建一个 AlertDialog
             textView.text="当前有${mBinding.drawBoard.layerManager.mShapes.size}个图层"
             val dialog = AlertDialog.Builder(context)
                 .setTitle("输入数据")
@@ -182,6 +185,19 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>() {
                 .create()
             dialog.show()
         }
+        colorPickerView.visibility = View.GONE
+        mBinding.palette.setOnClickListener{
+            if(colorPickerView.visibility == View.GONE){
+                colorPickerView.visibility = View.VISIBLE
+            }else if (colorPickerView.visibility == View.VISIBLE){
+                colorPickerView.visibility = View.GONE
+            }
+        }
+        colorPickerView.setColorListener(ColorEnvelopeListener { envelope, fromUser ->
+            thisPaint.color=envelope.color
+            mBinding.drawBoard.loadPaint(thisPaint)
+        })
+
     }
 
 }

@@ -74,4 +74,7 @@ dependencies {
 
     //反射
     implementation(libs.kotlin.reflect)
+
+    //色盘View
+    implementation(libs.colorpickerpreference)
 }

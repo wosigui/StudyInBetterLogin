@@ -318,8 +318,30 @@
             app:layout_constraintTop_toBottomOf="@+id/FreeHandShape"
             app:layout_constraintVertical_bias="0.0" />
 
+        <ImageView
+            android:id="@+id/palette"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:src="@drawable/ic_palette"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.911"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/removeLayer"
+            app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.skydoves.colorpickerview.ColorPickerView
+        android:id="@+id/colorPickerView"
+        android:layout_width="163dp"
+        android:layout_height="167dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.814"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.774" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
