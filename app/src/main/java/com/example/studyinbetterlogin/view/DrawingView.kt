@@ -13,19 +13,56 @@ import com.example.studyinbetterlogin.shapes.EraserShape
 import com.example.studyinbetterlogin.shapes.FreehandShape
 import com.example.studyinbetterlogin.shapes.LayerManager
 import com.example.studyinbetterlogin.shapes.Shape
+import com.example.studyinbetterlogin.shapes.TextShape
+import com.example.studyinbetterlogin.view.ViewListener.OnDrawingViewTextChangeListener
+import kotlin.math.atan
+import kotlin.math.atan2
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs)  {
     val layerManager: LayerManager = LayerManager()
+    companion object{
+        val LEFTTOP=0
+        val RIGHTTOP=1
+        val LEFTBOTTOM=2
+        val RIGHTBOTTOM=3
+        val ROTATE=4
+        val NONE=-1
+    }
+    var thisCornerHandleType:Int = 0
+    private var TextTag :Boolean = false
+        set(value) {
+            field = value
+            // 当 TextTag 变化时触发监听器
+            drawingViewTextChangeListener?.onDrawingViewTextChanged(field)
+        }
+    private var isTextNeedMove:Boolean = true
+    private var drawingViewTextChangeListener:OnDrawingViewTextChangeListener?=null
+    fun setTextChangeListener(listener: OnDrawingViewTextChangeListener) {
+        this.drawingViewTextChangeListener = listener
+    }
     private val states: MutableMap<String, Boolean> = mutableMapOf(
         "isFill" to false,
         "isMove" to false,
         "isDraw" to true ,// 默认状态
-        "isEraser" to false
+        "isEraser" to false,
+        "isText" to false,
+        "clickToSelect" to false
     )
+    fun thisState():String?{
+        for (k in states.keys){
+            if (states[k]==true)
+                return k
+        }
+        return null
+    }
     fun setState(key: String) {
         // 遍历所有键，将所有值设为 false
+        if(thisState()=="clickToSelect"){
+            clearShapeFrame()
+            invalidate()
+        }
         for (k in states.keys) {
             states[k] = false
         }
@@ -34,24 +71,37 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     }
     private lateinit var isMovingShape:Shape
     private lateinit var nextMovingShape:Shape
+    private lateinit var isSelectingClickShape:Shape
+    private lateinit var isSelectingClickToMoveShape:Shape
+    private var isSelectingClickNeedToMoveShape:Boolean=false
+    private var isNeedMove:Boolean = false
     private var isMovingX:Float?=null
     private var isMovingY:Float?=null
+    var thisTextShape:Shape? = null
     private var currentPaint: Paint = Paint().apply {
         color = Color.BLACK
         strokeWidth = 5f
         style = Paint.Style.STROKE
     }
     private var currentShape:Shape = CircleShape(-500f,-500f,currentPaint)
-
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         layerManager.drawShape(canvas)
     }
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                if(states["isFill"] == true){
+                if(states["isText"]==true){
+                    val pairOfBooleanAndShape=isEventAtText(event.x,event.y)
+                    if(pairOfBooleanAndShape.first){
+                        TextTag=!TextTag
+                        thisTextShape=pairOfBooleanAndShape.second
+                        isTextNeedMove=false
+                    }else{
+                        layerManager.addShape(TextShape(event.x,event.y,currentPaint))
+                        isTextNeedMove=true
+                    }
+                }else if(states["isFill"] == true){
                     fillPaint(event.x,event.y)
                     invalidate()
                     return true
@@ -68,27 +118,61 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
                     layerManager.addShape(shape)
                     performClick() // 调用 performClick 方法
                     invalidate()
+                }else if(states["clickToSelect"]==true){
+                    selectClickShape(event.x,event.y)
+                    invalidate()
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                if(states["isFill"] == true){
+                if(states["isText"]==true){
+                    if(isTextNeedMove){
+                        layerManager.endPoint(event.x,event.y)
+                        invalidate()
+                    }
+                    return true
+                }else if(states["isFill"] == true){
                     return true
                 }else if(states["isMove"] == true){
-                    moveSelectShape(event.x,event.y)
-                    invalidate()
+                    if(isNeedMove){
+                        moveSelectShape(event.x,event.y)
+                        invalidate()
+                    }
                     return true
                 }else if(states["isEraser"]==true){
-
                     eraserToMove(event.x,event.y)
                     invalidate()
                 }else if(states["isDraw"]==true){
                     layerManager.endPoint(event.x, event.y)
                     invalidate()
+                }else if(states["clickToSelect"]==true){
+                    if(isSelectingClickNeedToMoveShape){
+                        if(thisCornerHandleType== ROTATE){
+                            val CenterX = (isSelectingClickToMoveShape.startX + isSelectingClickToMoveShape.endX) / 2
+                            val CenterY = (isSelectingClickToMoveShape.startY + isSelectingClickToMoveShape.endY) / 2
+                            val deltaX = CenterX - event.x
+                            val deltaY = CenterY - event.y
+                            isSelectingClickToMoveShape.rotationAngle =
+                                (Math.toDegrees(atan2(deltaY, deltaX).toDouble())).toFloat()-90f
+                        }else{
+                            moveSelectingClickNeedToMoveShape(event.x,event.y)
+                        }
+                        invalidate()
+                    }
                 }
             }
             MotionEvent.ACTION_UP ->{
                 if(states["isDraw"]==true){
                     eraserToUp()
+                }else if(states["isText"]==true){
+                    if(isTextNeedMove){
+                        TextTag=!TextTag
+                        val pairOfBooleanAndShape=isEventAtText(event.x,event.y)
+                        thisTextShape=pairOfBooleanAndShape.second
+                        (layerManager.mShapes.last().last() as TextShape).isShowFrame=false
+                        invalidate()
+                    }
+                }else if(states["clickToSelect"]==true){
+                    thisCornerHandleType= NONE
                 }
             }
         }
@@ -129,7 +213,6 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         }
     }
     private fun selectMoveShape(x:Float,y:Float){
-        setState("isMove")
         for (layoutIndex in layerManager.mShapes.size-1 downTo 0) {
             for (shapeIndex in layerManager.mShapes[layoutIndex].size-1 downTo 0) {
                 if (layerManager.mShapes[layoutIndex][shapeIndex].isInside(x, y)) {
@@ -139,10 +222,12 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
                     if(shapeIndex+1<layerManager.mShapes[layoutIndex].size){
                         nextMovingShape=layerManager.mShapes[layoutIndex][shapeIndex+1]
                     }
+                    isNeedMove=true
                     return
                 }
             }
         }
+        isNeedMove=false
     }
     private fun moveSelectShape(x:Float,y:Float){
         if (!::isMovingShape.isInitialized) {
@@ -161,12 +246,10 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
             isMovingShape.startY += deltaY
             isMovingShape.endX += deltaX
             isMovingShape.endY += deltaY
-
         }
         isMovingX = x
         isMovingY = y
     }
-
     private fun eraserToClean(x:Float,y: Float){
         for (layoutIndex in layerManager.mShapes.size-1 downTo 0) {
             for (shapeIndex in layerManager.mShapes[layoutIndex].size-1 downTo 0) {
@@ -202,6 +285,82 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
             }
         }
     }
+    fun isEventAtText(x:Float,y:Float):Pair<Boolean,Shape?>{
+        for (layoutIndex in layerManager.mShapes.size-1 downTo 0) {
+            for (shapeIndex in layerManager.mShapes[layoutIndex].size-1 downTo 0) {
+                if(layerManager.mShapes[layoutIndex][shapeIndex] is TextShape&&layerManager.mShapes[layoutIndex][shapeIndex].isInside(x,y)){
+                    return Pair(true,layerManager.mShapes[layoutIndex][shapeIndex])
+                }
+            }
+        }
+        return Pair(false,null)
+    }
+    fun selectClickShape(x:Float,y:Float):Boolean{
+        for (layoutIndex in layerManager.mShapes.size-1 downTo 0) {
+            for (shapeIndex in layerManager.mShapes[layoutIndex].size-1 downTo 0) {
+                if(layerManager.mShapes[layoutIndex][shapeIndex].isFrameShow){
+                    if(layerManager.mShapes[layoutIndex][shapeIndex].isInsideCornerHandle(x,y)){
+                        isSelectingClickToMoveShape=layerManager.mShapes[layoutIndex][shapeIndex]
+                        isSelectingClickNeedToMoveShape=true
+                        when(isSelectingClickToMoveShape.thisrect){
+                            isSelectingClickToMoveShape.rect1->{thisCornerHandleType= LEFTTOP}
+                            isSelectingClickToMoveShape.rect2->{thisCornerHandleType= RIGHTTOP}
+                            isSelectingClickToMoveShape.rect3->{thisCornerHandleType= LEFTBOTTOM}
+                            isSelectingClickToMoveShape.rect4->{thisCornerHandleType= RIGHTBOTTOM}
+                            isSelectingClickToMoveShape.rectRotate->{thisCornerHandleType= ROTATE}
+                        }
+                        break
+                    }
+                }
+                if (layerManager.mShapes[layoutIndex][shapeIndex].isInside(x, y)) {
+                    isSelectingClickShape=layerManager.mShapes[layoutIndex][shapeIndex]
+                    layerManager.mShapes[layoutIndex][shapeIndex].isFrameShow=!layerManager.mShapes[layoutIndex][shapeIndex].isFrameShow
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    fun clearShapeFrame() {
+        for (layoutIndex in layerManager.mShapes.size - 1 downTo 0) {
+            for (shapeIndex in layerManager.mShapes[layoutIndex].size - 1 downTo 0) {
+                isSelectingClickShape = layerManager.mShapes[layoutIndex][shapeIndex]
+                layerManager.mShapes[layoutIndex][shapeIndex].isFrameShow = false
+            }
+        }
+    }
+    fun moveSelectingClickNeedToMoveShape(x:Float,y:Float){
+        when(thisCornerHandleType){
+            LEFTTOP->{
+                if(x<isSelectingClickToMoveShape.endX&&y<isSelectingClickToMoveShape.endY){
+                    isSelectingClickToMoveShape.startX=x
+                    isSelectingClickToMoveShape.startY=y
+                }
+            }
+            RIGHTTOP->{
+                if(x>isSelectingClickToMoveShape.startX&&y<isSelectingClickToMoveShape.endY){
+                    isSelectingClickToMoveShape.endX=x
+                    isSelectingClickToMoveShape.startY=y
+                }
+            }
+            LEFTBOTTOM->{
+                if(x<isSelectingClickToMoveShape.endX&&y>isSelectingClickToMoveShape.startY) {
+                    isSelectingClickToMoveShape.startX=x
+                    isSelectingClickToMoveShape.endY=y
+                }
+            }
+            RIGHTBOTTOM->{
+                if(x>isSelectingClickToMoveShape.startX&&y>isSelectingClickToMoveShape.startY) {
+                    isSelectingClickToMoveShape.endX = x
+                    isSelectingClickToMoveShape.endY = y
+                }
+            }
+
+        }
+
+    }
+
     private fun eraserToUp(){}
+
 
 }

@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -31,7 +32,9 @@ import com.example.studyinbetterlogin.shapes.LayerManager
 import com.example.studyinbetterlogin.shapes.LineShape
 import com.example.studyinbetterlogin.shapes.OvalShape
 import com.example.studyinbetterlogin.shapes.RectangleShape
+import com.example.studyinbetterlogin.shapes.TextShape
 import com.example.studyinbetterlogin.shapes.TriangleShape
+import com.example.studyinbetterlogin.view.ViewListener.OnDrawingViewTextChangeListener
 import com.example.studyinbetterlogin.viewmodel.MainViewModel
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
@@ -42,7 +45,7 @@ import java.util.Date
 import java.util.Locale
 
 
-class DrawFragment : BaseFragment<FragmentDrawBinding>() {
+class DrawFragment : BaseFragment<FragmentDrawBinding>(){
     private val mViewModel: MainViewModel by activityViewModels()
 
     override fun initBinding(): FragmentDrawBinding {
@@ -197,10 +200,42 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>() {
                 colorPickerView.visibility = View.GONE
             }
         }
-
-
+        mBinding.textShape.setOnClickListener{
+            mBinding.drawBoard.setState("isText")
+        }
+        mBinding.drawBoard.setTextChangeListener(object :OnDrawingViewTextChangeListener{
+            override fun onDrawingViewTextChanged(textTag: Boolean) {
+                Log.d("DrawFragment","isdialog")
+                val inflater = LayoutInflater.from(context)
+                val dialogView = inflater.inflate(R.layout.dialog_input, null)
+                val editText1 = dialogView.findViewById<EditText>(R.id.editText1)
+                val editText2 = dialogView.findViewById<EditText>(R.id.editText2)
+                editText2.visibility=View.GONE
+                editText1.inputType=InputType.TYPE_CLASS_TEXT
+                editText1.hint="输入你喜欢的文本吧！"
+                val textView=dialogView.findViewById<TextView>(R.id.LayoutCount)
+                textView.visibility=View.GONE
+                val dialog = AlertDialog.Builder(context)
+                    .setTitle("输入你要输入的文本")
+                    .setView(dialogView)
+                    .setPositiveButton("确定") { _, _ ->
+                        val input1 = editText1.text.toString()
+                        if(input1 == ""||input1.isEmpty()){
+                            Toast.makeText(context,"输入为空，不改变", Toast.LENGTH_LONG).show()
+                        }else{
+                            (mBinding.drawBoard.thisTextShape!! as TextShape).text=input1
+                            mBinding.drawBoard.invalidate()
+                        }
+                    }
+                    .setNegativeButton("取消", null)
+                    .create()
+                dialog.show()
+            }
+        })
+        mBinding.clickToSelect.setOnClickListener{
+            mBinding.drawBoard.setState("clickToSelect")
+        }
     }
-
 }
 
 

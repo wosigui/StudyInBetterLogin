@@ -7,12 +7,14 @@ import kotlin.math.abs
 
 class TriangleShape(startX: Float, startY: Float, mPaint: Paint) : Shape(startX, startY, mPaint) {
     override fun draw(canvas: Canvas) {
+        super.draw(canvas)
         val path = Path()
         path.moveTo(startX, startY)
         path.lineTo(endX, endY)
         path.lineTo(2 * startX - endX, endY)
         path.close()
         canvas.drawPath(path, mPaint)
+        canvas.restore()
     }
 
     override fun isInside(x: Float, y: Float): Boolean {

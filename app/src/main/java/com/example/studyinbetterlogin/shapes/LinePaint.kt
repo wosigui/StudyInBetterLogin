@@ -7,7 +7,9 @@ import kotlin.math.abs
 
 class LineShape(startX: Float, startY: Float, mPaint: Paint) : Shape(startX, startY, mPaint) {
     override fun draw(canvas: Canvas) {
+        super.draw(canvas)
         canvas.drawLine(startX, startY, endX, endY, mPaint)
+        canvas.restore()
     }
 
     override fun isInside(x: Float, y: Float): Boolean {

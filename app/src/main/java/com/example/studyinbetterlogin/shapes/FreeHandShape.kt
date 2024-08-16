@@ -19,7 +19,7 @@ class FreehandShape(startX: Float, startY: Float, mPaint: Paint) : Shape(startX,
     }
 
     override fun draw(canvas: Canvas) {
-
+        super.draw(canvas)
         if (points.size < 2) return
 
         val path = Path()
@@ -32,6 +32,7 @@ class FreehandShape(startX: Float, startY: Float, mPaint: Paint) : Shape(startX,
         }
 
         canvas.drawPath(path, mPaint)
+        canvas.restore()
     }
 
     override fun isInside(x: Float, y: Float): Boolean {

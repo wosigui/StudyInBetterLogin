@@ -21,6 +21,9 @@ class LayerManager{
         for (layer in mShapes) {
             for (shape in layer) {
                 shape.draw(mCanvas)
+                if (shape.isFrameShow){
+                    shape.drawFrame(mCanvas)
+                }
             }
         }
     }

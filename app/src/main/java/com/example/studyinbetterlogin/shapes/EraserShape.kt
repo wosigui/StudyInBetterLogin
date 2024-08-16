@@ -25,19 +25,17 @@ class EraserShape(startX: Float, startY: Float, mPaint: Paint) : Shape(startX, s
     }
 
     override fun draw(canvas: Canvas) {
-
+        super.draw(canvas)
         if (points.size < 2) return
-
         val path = Path()
         val firstPoint = points.first()
         path.moveTo(firstPoint[0], firstPoint[1])
-
         for (i in 1 until points.size) {
             val point = points[i]
             path.lineTo(point[0], point[1])
         }
-
         canvas.drawPath(path, eraserPaint)
+        canvas.restore()
     }
 
     override fun isInside(x: Float, y: Float): Boolean {
