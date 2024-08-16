@@ -43,7 +43,7 @@ abstract class Shape(
     var right:Float = 0f
     var top :Float = 0f
     var bottom :Float = 0f
-    var cornerHandleSize:Float = 16f
+    var cornerHandleSize:Float = 25f
     var rotationAngle = 0f
     lateinit var rect:RectF
     lateinit var rect1:RectF

@@ -177,12 +177,17 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>(){
                 .setTitle("输入数据")
                 .setView(dialogView)
                 .setPositiveButton("确定") { _, _ ->
-                    val input1 = editText1.text.toString().toInt()
-                    val input2 = editText2.text.toString().toInt()
-                    mBinding.drawBoard.invalidate()
-                    if(!mBinding.drawBoard.layerManager.ChangeLayer(input1-1,input2-1)){
-                        Toast.makeText(context,"输入的索引溢出", Toast.LENGTH_LONG).show()
+                    if(editText1.text.isEmpty()||editText2.text.isEmpty()){
+                        Toast.makeText(context,"请输入每个框框，拜托了", Toast.LENGTH_LONG).show()
+                    }else{
+                        val input1 = editText1.text.toString().toInt()
+                        val input2 = editText2.text.toString().toInt()
+                        mBinding.drawBoard.invalidate()
+                        if(!mBinding.drawBoard.layerManager.ChangeLayer(input1-1,input2-1)){
+                            Toast.makeText(context,"输入的索引溢出", Toast.LENGTH_LONG).show()
+                        }
                     }
+
                 }
                 .setNegativeButton("取消", null)
                 .create()
