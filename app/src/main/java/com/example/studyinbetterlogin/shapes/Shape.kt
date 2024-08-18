@@ -16,7 +16,19 @@ abstract class Shape(
     open var endX: Float = startX
     open var endY: Float = startY
     var isFrameShow:Boolean = false
-
+    var left:Float = 0f
+    var right:Float = 0f
+    var top :Float = 0f
+    var bottom :Float = 0f
+    var cornerHandleSize:Float = 25f
+    var rotationAngle = 0f
+    lateinit var rect:RectF
+    lateinit var rect1:RectF
+    lateinit var rect2:RectF
+    lateinit var rect3:RectF
+    lateinit var rect4:RectF
+    lateinit var rectRotate:RectF
+    lateinit var thisrect:RectF
     /**
      * 建议在继承的时候在此方法开头使用
      * super.draw(canvas)
@@ -39,19 +51,6 @@ abstract class Shape(
         strokeWidth = 10f
         style = Paint.Style.FILL
     }
-    var left:Float = 0f
-    var right:Float = 0f
-    var top :Float = 0f
-    var bottom :Float = 0f
-    var cornerHandleSize:Float = 25f
-    var rotationAngle = 0f
-    lateinit var rect:RectF
-    lateinit var rect1:RectF
-    lateinit var rect2:RectF
-    lateinit var rect3:RectF
-    lateinit var rect4:RectF
-    lateinit var rectRotate:RectF
-    lateinit var thisrect:RectF
     fun drawFrame(canvas: Canvas){
         left = Math.min(startX, endX)
         right = Math.max(startX, endX)

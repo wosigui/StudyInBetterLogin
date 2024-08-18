@@ -62,7 +62,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginToWaitFragment"
-        android:name="com.example.studyinbetterlogin.fragment.darwFragment.loginToWaitFragment"
+        android:name="com.example.studyinbetterlogin.fragment.loginToWaitFragment"
         android:label="fragment_login_to_wait"
         tools:layout="@layout/fragment_login_to_wait" >
         <action

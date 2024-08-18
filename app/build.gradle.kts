@@ -77,4 +77,9 @@ dependencies {
 
     //色盘View
     implementation(libs.colorpickerpreference)
+
+    //修复reBuild的问题
+    implementation(libs.kotlin.reflect.v1531)
+
+
 }

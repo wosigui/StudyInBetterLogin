@@ -1,11 +1,16 @@
 package com.example.studyinbetterlogin.fragment.darwFragment
 
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
+import android.os.FileUtils
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -25,8 +30,11 @@ import com.example.studyinbetterlogin.adapter.DrawingAdapter
 import com.example.studyinbetterlogin.databinding.FragmentChooseBoardBinding
 import com.example.studyinbetterlogin.databinding.FragmentLoginToWaitBinding
 import com.example.studyinbetterlogin.fragment.BaseFragment
+import com.example.studyinbetterlogin.utils.FileUtil
 import com.example.studyinbetterlogin.viewmodel.MainViewModel
 import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
 
 class ChooseBoardFragment : BaseFragment<FragmentChooseBoardBinding>() {
     private val mViewModel: MainViewModel by activityViewModels()
@@ -37,21 +45,18 @@ class ChooseBoardFragment : BaseFragment<FragmentChooseBoardBinding>() {
 
     override fun initView() {
         super.initView()
+        val fileUtil=FileUtil()
         val recyclerView = mBinding.DrawableList
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         // 加载用户目录中的所有 PNG 文件并转换为 Drawable 列表
-        val drawableList = context?.let { getPngDrawablesInAccountDir(it, mViewModel.Logged_user.value!!) }
+        val drawableList = context?.let { fileUtil.getPngDrawablesInAccountDir(it, mViewModel.Logged_user.value!!) }
         if(!drawableList.isNullOrEmpty()){
             mBinding.helloWorld.visibility=View.INVISIBLE
         }
         val adapter = drawableList?.let { DrawingAdapter(it, mViewModel, recyclerView) }
-
-        // 设置适配器
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
-        // 添加缩放动画
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -69,10 +74,8 @@ class ChooseBoardFragment : BaseFragment<FragmentChooseBoardBinding>() {
             }
         })
 
-// 添加 SnapHelper 实现自动对齐
         val snapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(recyclerView)
-        // 设置点击事件
         mBinding.addBoard.setOnClickListener {
             findNavController().navigate(R.id.action_chooseBoardFragment_to_drawFragment)
         }
@@ -80,7 +83,7 @@ class ChooseBoardFragment : BaseFragment<FragmentChooseBoardBinding>() {
         mBinding.shareBoard.setOnClickListener {
             mViewModel.Logged_user.value?.let { it1 ->
                 context?.let { it2 ->
-                    displaySavedDrawView(it2, it1, mBinding.savedImageView)
+                    fileUtil.displaySavedDrawView(it2, it1, mBinding.savedImageView)
                 }
             }
         }
@@ -89,6 +92,36 @@ class ChooseBoardFragment : BaseFragment<FragmentChooseBoardBinding>() {
                 Toast.makeText(requireContext(), "没有照片用于删除", Toast.LENGTH_SHORT).show()
             }else{
                 showAlert("警告","你确定要删除这张照片吗？",recyclerView)
+            }
+        }
+        mBinding.downloadBoard.setOnClickListener{
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            val adapter = recyclerView.adapter as DrawingAdapter
+            val drawableItem = adapter.getItem(firstVisibleItemPosition) // 获取顶部的 DrawableItem
+            val savedUri = context?.let { it1 -> fileUtil.saveFilePathToGallery(it1, drawableItem.filePath, "new_image.jpg") }
+            savedUri?.let { context?.let { it1 -> fileUtil.notifyGallery(it1, it) } }
+            Toast.makeText(requireContext(), "保存成功", Toast.LENGTH_SHORT).show()
+        }
+        mBinding.shareBoard.setOnClickListener{
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            val adapter = recyclerView.adapter as DrawingAdapter
+            val drawableItem = adapter.getItem(firstVisibleItemPosition) // 获取顶部的 DrawableItem
+
+            // 先保存文件到相册
+            val savedUri = context?.let { it1 -> fileUtil.saveFilePathToGallery(it1, drawableItem.filePath, "new_image.jpg") }
+
+            if (savedUri != null) {
+                // 确保图片已保存到相册
+                Log.d("ShareImage", "Image saved to gallery: $savedUri")
+
+                context?.let { it1 ->
+                    fileUtil.notifyGallery(it1, savedUri)
+                    fileUtil.shareImage(it1, savedUri) // 调用分享方法
+                }
+            } else {
+                Log.e("ShareImage", "Failed to save image to gallery")
             }
         }
     }
@@ -125,50 +158,3 @@ class ChooseBoardFragment : BaseFragment<FragmentChooseBoardBinding>() {
 
 }
 
-// 获取用户目录中的 PNG 文件并转换为 Drawable 列表
-fun getPngDrawablesInAccountDir(context: Context, account: String): MutableList<DrawableItem> {
-    val accountDir = getUserDirectory(context, account)
-
-    return if (accountDir.exists() && accountDir.isDirectory) {
-        accountDir.listFiles { _, name ->
-            name.endsWith(".png")
-        }?.mapNotNull { file ->
-            Drawable.createFromPath(file.absolutePath)?.let { DrawableItem(it, file.absolutePath) }
-        } ?.toMutableList()?: mutableListOf()
-    } else {
-        mutableListOf()
-    }
-}
-
-
-
-
-fun displaySavedDrawView(context: Context, account: String, imageView: ImageView) {
-    // 获取用户文件夹
-    val userDir = getUserDirectory(context, account)
-
-    // 找到保存的文件（例如最后保存的文件）
-    val savedFile = File(userDir, "my.png") // 替换为实际文件名
-
-    if (savedFile.exists()) {
-        // 从文件中读取 Bitmap
-        val bitmap = loadBitmapFromFile(savedFile.absolutePath)
-
-        // 将 Bitmap 显示在 ImageView 中
-        if (bitmap != null) {
-            imageView.setImageBitmap(bitmap)
-        } else {
-            Log.e("LoadBitmap", "Failed to load bitmap from file.")
-        }
-    } else {
-        Log.e("LoadBitmap", "File does not exist.")
-    }
-}
-fun loadBitmapFromFile(filePath: String): Bitmap? {
-    return try {
-        BitmapFactory.decodeFile(filePath)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
-}

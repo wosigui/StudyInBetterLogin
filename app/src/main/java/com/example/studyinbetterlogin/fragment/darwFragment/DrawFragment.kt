@@ -34,6 +34,7 @@ import com.example.studyinbetterlogin.shapes.OvalShape
 import com.example.studyinbetterlogin.shapes.RectangleShape
 import com.example.studyinbetterlogin.shapes.TextShape
 import com.example.studyinbetterlogin.shapes.TriangleShape
+import com.example.studyinbetterlogin.utils.FileUtil
 import com.example.studyinbetterlogin.view.ViewListener.OnDrawingViewTextChangeListener
 import com.example.studyinbetterlogin.viewmodel.MainViewModel
 import com.skydoves.colorpickerview.ColorEnvelope
@@ -54,7 +55,7 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>(){
 
     override fun initView() {
         val colorPickerView=mBinding.colorPickerView
-
+        val fileUtil=FileUtil()
         super.initView()
         val thisPaint: Paint = Paint().apply {
             color = Color.WHITE
@@ -157,7 +158,7 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>(){
             mBinding.drawBoard.setState("isEraser")
         }
         mBinding.save.setOnClickListener{
-            context?.let { it1 -> saveDrawViewToUserFolder(it1,mBinding.drawBoard,mViewModel.Logged_user.value!!) }
+            context?.let { it1 -> fileUtil.saveDrawViewToUserFolder(it1,mBinding.drawBoard,mViewModel.Logged_user.value!!) }
         }
         mBinding.addLayout.setOnClickListener{
             mBinding.drawBoard.layerManager.addLayer()
@@ -247,62 +248,6 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>(){
 
 
 
-// 获取用户的文件夹
-fun getUserDirectory(context: Context, account: String): File {
-    val userDir = File(context.getExternalFilesDir(null), account)
-    if (!userDir.exists()) {
-        userDir.mkdirs()  // 如果文件夹不存在，则创建
-    }
-    return userDir
-}
-
-// 生成唯一的文件名
-fun generateUniqueFileName(): String {
-    // 获取当前时间戳
-    val timestamp = System.currentTimeMillis()
-
-    // 将时间戳转换为日期格式 yyyyMMdd_HHmmss
-    val sdf = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
-    val date = Date(timestamp)
-    val formattedDate = sdf.format(date)
-
-    // 使用格式化的日期生成唯一文件名
-    return "my$formattedDate.png"
-}
-
-// 将 DrawView 保存到指定路径
-fun saveDrawViewToUserFolder(context: Context, drawView: View, account: String) {
-    val userDir = getUserDirectory(context, account)
-    val fileName = generateUniqueFileName()
-    val filePath = File(userDir, fileName).absolutePath
-
-    val bitmap = getBitmapFromView(drawView)
-    saveBitmapToFile(bitmap, filePath)
-
-    Log.d("SaveDrawView", "DrawView saved to $filePath")
-}
-
-// 获取 View 的 Bitmap
-fun getBitmapFromView(view: View): Bitmap {
-    val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(bitmap)
-    view.draw(canvas)
-    return bitmap
-}
-
-// 保存 Bitmap 到文件
-fun saveBitmapToFile(bitmap: Bitmap, filePath: String) {
-    val file = File(filePath)
-    try {
-        val outputStream = FileOutputStream(file)
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-        outputStream.flush()
-        outputStream.close()
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Log.e("SaveBitmap", "Failed to save bitmap: ${e.message}")
-    }
-}
 
 
 

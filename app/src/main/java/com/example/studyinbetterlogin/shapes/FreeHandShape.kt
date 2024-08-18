@@ -12,8 +12,6 @@ class FreehandShape(startX: Float, startY: Float, mPaint: Paint) : Shape(startX,
             field = value
             addPoint(value, endY)
         }
-
-
     private fun addPoint(x: Float, y: Float) {
         points.add(mutableListOf(x,y))
     }

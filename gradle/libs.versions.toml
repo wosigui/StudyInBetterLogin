@@ -9,6 +9,7 @@ junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.6.1"
 kotlinReflect = "<kotlin_version>"
+kotlinReflectVersion = "1.5.31"
 material = "1.10.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
@@ -25,11 +26,13 @@ navigationArg = "2.7.7"
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "androidGradle" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 colorpickerpreference = { module = "com.github.skydoves:colorpickerpreference", version.ref = "colorpickerpreference" }
+jetbrains-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlinReflect" }
+kotlin-reflect-v1531 = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlinReflectVersion" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
