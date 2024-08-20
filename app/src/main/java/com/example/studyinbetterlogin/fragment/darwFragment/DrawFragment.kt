@@ -1,5 +1,6 @@
 package com.example.studyinbetterlogin.fragment.darwFragment
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
@@ -53,6 +54,7 @@ class DrawFragment : BaseFragment<FragmentDrawBinding>(){
         return  FragmentDrawBinding.inflate(layoutInflater)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun initView() {
         val colorPickerView=mBinding.colorPickerView
         val fileUtil=FileUtil()

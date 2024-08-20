@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.safe.args)
     alias(libs.plugins.kotlin.parcelize)
 
+
 }
 
 android {
@@ -80,6 +81,5 @@ dependencies {
 
     //修复reBuild的问题
     implementation(libs.kotlin.reflect.v1531)
-
 
 }

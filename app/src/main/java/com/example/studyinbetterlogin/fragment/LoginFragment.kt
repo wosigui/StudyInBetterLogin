@@ -9,14 +9,30 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.studyinbetterlogin.R
 import com.example.studyinbetterlogin.databinding.FragmentLoginBinding
+import com.example.studyinbetterlogin.viewmodel.LoginViewModel
 import com.example.studyinbetterlogin.viewmodel.MainViewModel
+import com.example.studyinbetterlogin.db.Repository
+import com.example.studyinbetterlogin.db.UserDatabase
+import com.example.studyinbetterlogin.viewmodel.LoginViewModelFactory
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     private val mViewModel: MainViewModel by activityViewModels()
+
+    /**
+     * 这个变量用于未来我在创建类似的数据的时候我可以复用
+     */
+    private val loginViewModel: LoginViewModel by viewModels {
+        val userDao = UserDatabase.getDatabase(requireContext()).userDao()
+        val repository = Repository(userDao)
+        LoginViewModelFactory(repository)
+    }
     override fun initBinding(): FragmentLoginBinding {
         return FragmentLoginBinding.inflate(layoutInflater)
     }
@@ -55,7 +71,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                         showAlert("错误", "用户列表为空，请稍后重试")
                         return@setOnClickListener
                     }
-
                     if (userList.isEmpty()) {
                         Log.e("LoginFragment", "User list is empty")
                         showAlert("错误", "用户列表为空，请稍后重试")
@@ -64,20 +79,23 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                     for (user in userList) {
                         Log.d("LoginFragment", "User: ${user.id}, ${user.account}, ${user.password}, ${user.pattrenPassword}")
                     }
+                    mViewModel.login(account, password)
 
-                    if (userList.any { user -> user.account == account && user.password == password }) {
-                        Toast.makeText(requireContext(), "登入成功", Toast.LENGTH_SHORT).show()
-                        val loggedInUser = userList.find { user -> user.account == account && user.password == password }
-                        if (loggedInUser != null) {
-                            mViewModel.Logged_user.value = loggedInUser.account
-                        }
-                        findNavController().navigate(R.id.action_loginFragment_to_loginToWaitFragment)
-                    } else {
-                        showAlert("提示", "请输入正确的账号和密码")
-                    }
                 }
             }
         }
+        mViewModel.loggedInUser.observe(viewLifecycleOwner, Observer { loggedInUser ->
+            if (loggedInUser != "") {
+                Toast.makeText(requireContext(), "登入成功", Toast.LENGTH_SHORT).show()
+                mViewModel.Logged_user.value = loggedInUser
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.loginFragment, true)  // 清除之前的所有Fragment
+                    .build()
+                findNavController().navigate(R.id.action_loginFragment_to_loginToWaitFragment,null,navOptions)
+            } else {
+                showAlert("提示", "请输入正确的账号和密码")
+            }
+        })
     }
 
     private fun showAlert(title: String, message: String) {

@@ -34,7 +34,6 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     private var TextTag :Boolean = false
         set(value) {
             field = value
-            // 当 TextTag 变化时触发监听器
             drawingViewTextChangeListener?.onDrawingViewTextChanged(field)
         }
     private var isTextNeedMove:Boolean = true

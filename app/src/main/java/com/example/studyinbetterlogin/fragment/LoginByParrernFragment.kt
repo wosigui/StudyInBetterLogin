@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.studyinbetterlogin.R
@@ -87,29 +88,17 @@ class LoginByParrernFragment : BaseFragment<FragmentLoginByParrernBinding>() {
                         showAlert("错误", "用户列表为空，请稍后重试")
                         return@setTagChangeListener
                     }
-
                     if (userList.isEmpty()) {
                         Log.e("LoginFragment", "User list is empty")
                         showAlert("错误", "用户列表为空，请稍后重试")
                         return@setTagChangeListener
                     }
-
                     for (user in userList) {
                         Log.d("LoginFragment", "User: ${user.id}, ${user.account}, ${user.password}, ${user.pattrenPassword}")
                         Log.d("LoginFragment", "$s ${user.pattrenPassword} ${user.account} $account")
                     }
 
-                    if (userList.any { user -> user.account == account && user.pattrenPassword == password }) {
-                        Toast.makeText(requireContext(), "登入成功", Toast.LENGTH_SHORT).show()
-                        val loggedInUser = userList.find { user -> user.account == account && user.pattrenPassword == password }
-                        if (loggedInUser != null) {
-                            mViewModel.Logged_user.value = loggedInUser.account
-                        }
-                        findNavController().navigate(R.id.action_loginByParrernFragment_to_loginToWaitFragment)
-                    } else {
-                        mBinding.patternUnlockView.inErrorView()
-                        showAlert("提示", "请输入图案密码")
-                    }
+                    mViewModel.loginByPattern(account,password)
                 }
             }
         }
@@ -139,5 +128,27 @@ class LoginByParrernFragment : BaseFragment<FragmentLoginByParrernBinding>() {
             val isVisible = mViewModel.adapterShowOrNot.value ?: true
             mViewModel.adapterShowOrNot.value = !isVisible
         }
+        mViewModel.loggedInUser.observe(viewLifecycleOwner, Observer { loggedInUser ->
+            if (loggedInUser != "") {
+                Toast.makeText(requireContext(), "登入成功", Toast.LENGTH_SHORT).show()
+                mViewModel.Logged_user.value = loggedInUser
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.loginFragment, true)  // 清除之前的所有Fragment
+                    .build()
+                findNavController().navigate(R.id.action_loginByParrernFragment_to_loginToWaitFragment,null,navOptions)
+            } else {
+                showAlert("提示", "请输入正确的账号和图案密码")
+            }
+
+        })
+    }
+    private fun showAlert(title: String, message: String) {
+        AlertDialog.Builder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("确定") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 }
