@@ -137,6 +137,7 @@ class LoginByParrernFragment : BaseFragment<FragmentLoginByParrernBinding>() {
                     .build()
                 findNavController().navigate(R.id.action_loginByParrernFragment_to_loginToWaitFragment,null,navOptions)
             } else {
+                mBinding.patternUnlockView.inErrorView()
                 showAlert("提示", "请输入正确的账号和图案密码")
             }
 
@@ -147,6 +148,8 @@ class LoginByParrernFragment : BaseFragment<FragmentLoginByParrernBinding>() {
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton("确定") { dialog, _ ->
+                mBinding.patternUnlockView.setCircles()
+                mBinding.patternUnlockView.outErrorView()
                 dialog.dismiss()
             }
             .show()
