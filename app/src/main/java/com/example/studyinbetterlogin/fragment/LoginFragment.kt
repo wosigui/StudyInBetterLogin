@@ -6,15 +6,28 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.drake.brv.utils.linear
+import com.drake.brv.utils.setup
 import com.example.studyinbetterlogin.R
+import com.example.studyinbetterlogin.api.Constants
+import com.example.studyinbetterlogin.api.MovieApiInterface
 import com.example.studyinbetterlogin.databinding.FragmentLoginBinding
+import com.example.studyinbetterlogin.databinding.MovieItemLayoutBinding
 import com.example.studyinbetterlogin.viewmodel.LoginViewModel
 import com.example.studyinbetterlogin.viewmodel.MainViewModel
 import com.example.studyinbetterlogin.db.Repository
 import com.example.studyinbetterlogin.db.UserDatabase
+import com.example.studyinbetterlogin.model.Data
 import com.example.studyinbetterlogin.viewmodel.LoginViewModelFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     private val mViewModel: MainViewModel by activityViewModels()
@@ -31,6 +44,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         return FragmentLoginBinding.inflate(layoutInflater)
     }
     override fun initView() {
+
         // 观察 userList 的变化
         mViewModel.userList.observe(viewLifecycleOwner, Observer { users ->
             if (users != null) {
@@ -90,6 +104,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 showAlert("提示", "请输入正确的账号和密码")
             }
         })
+
+
+
+
     }
 
     private fun showAlert(title: String, message: String) {

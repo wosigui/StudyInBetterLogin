@@ -18,5 +18,8 @@ class loginToWaitFragment : BaseFragment<FragmentLoginToWaitBinding>() {
         mBinding.magicDraw.setOnClickListener{
             findNavController().navigate(R.id.action_loginToWaitFragment_to_chooseBoardFragment)
         }
+        mBinding.foodApp.setOnClickListener {
+            findNavController().navigate(R.id.action_loginToWaitFragment_to_studyFragment)
+        }
     }
 }

@@ -1,23 +1,15 @@
-package com.example.studyinbetterlogin.fragment.darwFragment
+package com.example.studyinbetterlogin.fragment.drawFragment
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
 import android.text.InputType
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
@@ -25,11 +17,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.studyinbetterlogin.R
 import com.example.studyinbetterlogin.databinding.FragmentDrawBinding
-import com.example.studyinbetterlogin.databinding.FragmentLoginToWaitBinding
 import com.example.studyinbetterlogin.fragment.BaseFragment
-import com.example.studyinbetterlogin.shapes.CircleShape
 import com.example.studyinbetterlogin.shapes.FreehandShape
-import com.example.studyinbetterlogin.shapes.LayerManager
 import com.example.studyinbetterlogin.shapes.LineShape
 import com.example.studyinbetterlogin.shapes.OvalShape
 import com.example.studyinbetterlogin.shapes.RectangleShape
@@ -38,13 +27,7 @@ import com.example.studyinbetterlogin.shapes.TriangleShape
 import com.example.studyinbetterlogin.utils.FileUtil
 import com.example.studyinbetterlogin.view.ViewListener.OnDrawingViewTextChangeListener
 import com.example.studyinbetterlogin.viewmodel.MainViewModel
-import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
-import java.io.File
-import java.io.FileOutputStream
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 
 class DrawFragment : BaseFragment<FragmentDrawBinding>(){

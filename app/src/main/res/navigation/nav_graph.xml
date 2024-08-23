@@ -68,10 +68,13 @@
         <action
             android:id="@+id/action_loginToWaitFragment_to_chooseBoardFragment"
             app:destination="@id/chooseBoardFragment" />
+        <action
+            android:id="@+id/action_loginToWaitFragment_to_studyFragment"
+            app:destination="@id/studyFragment" />
     </fragment>
     <fragment
         android:id="@+id/chooseBoardFragment"
-        android:name="com.example.studyinbetterlogin.fragment.darwFragment.ChooseBoardFragment"
+        android:name="com.example.studyinbetterlogin.fragment.drawFragment.ChooseBoardFragment"
         android:label="fragment_choose_board"
         tools:layout="@layout/fragment_choose_board" >
         <action
@@ -80,11 +83,16 @@
     </fragment>
     <fragment
         android:id="@+id/drawFragment"
-        android:name="com.example.studyinbetterlogin.fragment.darwFragment.DrawFragment"
+        android:name="com.example.studyinbetterlogin.fragment.drawFragment.DrawFragment"
         android:label="fragment_draw"
         tools:layout="@layout/fragment_draw" >
         <action
             android:id="@+id/action_drawFragment_to_chooseBoardFragment"
             app:destination="@id/chooseBoardFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/studyFragment"
+        android:name="com.example.studyinbetterlogin.fragment.foodFragment.SelectFoodFragment"
+        android:label="fragment_study"
+        tools:layout="@layout/fragment_study" />
 </navigation>

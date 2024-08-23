@@ -1,6 +1,5 @@
 package com.example.studyinbetterlogin.viewmodel
 
-import android.accounts.Account
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -64,6 +63,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
             _loggedInUser.value=""
         }
     }
+
     fun loginByPattern(account: String, patternPassword: String) {
         val userList=thisUserList.value
         if (userList.isNullOrEmpty()) {
@@ -78,6 +78,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
             _loggedInUser.value=""
         }
     }
+
     fun updatePatternData(data: List<Pair<Int, Int>>) {
         var s =""
         for((i,j) in data)

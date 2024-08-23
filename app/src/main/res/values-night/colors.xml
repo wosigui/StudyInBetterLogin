@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/values-night/colors.xml -->
+<resources>
+    <color name="colorPrimaryNight">#BB86FC</color> <!-- 用于未激活状态的深色主题 -->
+    <color name="colorSecondaryNight">#03DAC5</color> <!-- 用于激活状态的深色主题 -->
+    <color name="recipes_color">#332347</color>
+    <color name="recipesText_color">#FFFFFF</color> <!-- 设置为你期望的颜色值 -->
+
+</resources>

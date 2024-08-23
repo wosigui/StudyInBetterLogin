@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1E2226"
-    tools:context=".fragment.darwFragment.DrawFragment">
+    tools:context=".fragment.drawFragment.DrawFragment">
 
     <com.example.studyinbetterlogin.view.DrawingView
         android:id="@+id/drawBoard"

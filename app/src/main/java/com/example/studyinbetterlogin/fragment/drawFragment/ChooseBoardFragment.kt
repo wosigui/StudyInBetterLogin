@@ -1,22 +1,7 @@
-package com.example.studyinbetterlogin.fragment.darwFragment
+package com.example.studyinbetterlogin.fragment.drawFragment
 
-import android.content.ContentValues
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.os.Bundle
-import android.os.FileUtils
-import android.provider.MediaStore
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
@@ -25,16 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.studyinbetterlogin.R
-import com.example.studyinbetterlogin.adapter.DrawableItem
 import com.example.studyinbetterlogin.adapter.DrawingAdapter
 import com.example.studyinbetterlogin.databinding.FragmentChooseBoardBinding
-import com.example.studyinbetterlogin.databinding.FragmentLoginToWaitBinding
 import com.example.studyinbetterlogin.fragment.BaseFragment
 import com.example.studyinbetterlogin.utils.FileUtil
 import com.example.studyinbetterlogin.viewmodel.MainViewModel
 import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
 
 class ChooseBoardFragment : BaseFragment<FragmentChooseBoardBinding>() {
     private val mViewModel: MainViewModel by activityViewModels()

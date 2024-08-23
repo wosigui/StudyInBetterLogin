@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.swiperefreshlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -82,4 +83,16 @@ dependencies {
     //修复reBuild的问题
     implementation(libs.kotlin.reflect.v1531)
 
+    //json格式转化类
+    implementation (libs.gson)
+
+    //网络连接调用库
+    implementation(libs.retrofit.v2110)
+    implementation(libs.converter.gson)
+
+    //快速构建recycleView
+    implementation(libs.brv)
+
+    //Glide 是一个快速高效的开源媒体管理和图像加载框架，适用于 Android，它包装媒体 解码、内存和磁盘缓存以及资源池化到一个简单易用的界面中。
+    implementation(libs.glide)
 }

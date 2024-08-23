@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.foodFragment.SelectFoodFragment">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refreshView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView13">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="match_parent"
+        android:layout_height="67dp"
+        android:textColor="@color/recipesText_color"
+        android:background="@color/recipes_color"
+        android:paddingLeft="20dp"
+        android:paddingTop="18dp"
+        android:text="Recipes"
+        android:textSize="22dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:src="@android:drawable/ic_menu_search"
+        app:layout_constraintBottom_toBottomOf="@+id/textView13"
+        app:layout_constraintEnd_toEndOf="@+id/textView13"
+        app:layout_constraintHorizontal_bias="0.825"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.842" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:src="@android:drawable/ic_dialog_dialer"
+        app:layout_constraintBottom_toBottomOf="@+id/textView13"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.842" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/tagSelect"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="#0F3B5F"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/refreshView">
+
+        <TextView
+            android:id="@+id/MealType"
+            android:layout_width="132dp"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:text="MealType"
+            android:textColor="#FFFFFF"
+            android:textSize="22dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.075"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.144" />
+
+        <TextView
+            android:id="@+id/DietType"
+            android:layout_width="132dp"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:text="DietType"
+            android:textColor="#FFFFFF"
+            android:textSize="22dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/MealType"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/MealType"
+            app:layout_constraintTop_toBottomOf="@+id/MealType"
+            app:layout_constraintVertical_bias="0.465" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:context=".fragment.foodFragment.SelectFoodFragment"
+            tools:layout_editor_absoluteY="-76dp">
+
+
+            <androidx.constraintlayout.helper.widget.Flow
+                android:id="@+id/flow"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="MainCourse,snack,dessert,Appetizer"
+                app:flow_horizontalAlign="start"
+                app:flow_horizontalGap="8dp"
+                app:flow_horizontalStyle="spread_inside"
+                app:flow_verticalAlign="center"
+                app:flow_verticalBias="0.0"
+                app:flow_wrapMode="none"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.406" />
+
+            <TextView
+                android:id="@+id/MainCourse"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:background="@drawable/food_select_shape"
+                android:gravity="center"
+                android:text="main course"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <!-- 第二个 TextView -->
+            <TextView
+                android:id="@+id/snack"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:background="@drawable/food_select_shape"
+                android:gravity="center"
+                android:text="snack"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <!-- 第三个 TextView -->
+            <TextView
+                android:id="@+id/dessert"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:background="@drawable/food_select_shape"
+                android:gravity="center"
+                android:text="dessert"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                tools:layout_editor_absoluteX="286dp"
+                tools:layout_editor_absoluteY="180dp" />
+
+            <!-- 第四个 TextView -->
+            <TextView
+                android:id="@+id/Appetizer"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:background="@drawable/food_select_shape"
+                android:gravity="center"
+                android:text="appetizer"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="150dp"
+            tools:context=".fragment.foodFragment.SelectFoodFragment">
+
+
+            <androidx.constraintlayout.helper.widget.Flow
+                android:id="@+id/flow1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="Vegan,Vegetarian,Ketogenic,DairyFree"
+                app:flow_horizontalAlign="start"
+                app:flow_horizontalGap="8dp"
+                app:flow_horizontalStyle="spread_inside"
+                app:flow_verticalAlign="center"
+                app:flow_verticalBias="0.0"
+                app:flow_wrapMode="none"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.406" />
+
+            <TextView
+                android:id="@+id/Vegan"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:background="@drawable/food_select_shape"
+                android:gravity="center"
+                android:text="Vegan"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <!-- 第二个 TextView -->
+            <TextView
+                android:id="@+id/Vegetarian"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:background="@drawable/food_select_shape"
+                android:gravity="center"
+                android:text="Vegetarian"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <!-- 第三个 TextView -->
+            <TextView
+                android:id="@+id/Ketogenic"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:background="@drawable/food_select_shape"
+                android:gravity="center"
+                android:text="Ketogenic"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                tools:layout_editor_absoluteX="286dp"
+                tools:layout_editor_absoluteY="180dp" />
+
+            <!-- 第四个 TextView -->
+            <TextView
+                android:id="@+id/DairyFree"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:background="@drawable/food_select_shape"
+                android:gravity="center"
+                android:text="Dairy Free"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/selectFood"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/yongcanqu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.859"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/refreshView"
+        app:layout_constraintVertical_bias="0.87" />
+
+    <TextView
+        android:id="@+id/backgroundBlack"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:background="#80666666"
+        app:layout_constraintBottom_toTopOf="@+id/tagSelect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

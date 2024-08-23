@@ -132,5 +132,4 @@ class FileUtil {
             Log.e("SaveBitmap", "Failed to save bitmap: ${e.message}")
         }
     }
-
 }
